@@ -1,0 +1,139 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+abstract class AbstractFlyingObject {
+    # locationX: int
+    # locationY: int
+    # speedX: int
+    # speedY: int
+    # image: BufferedImage
+    # width: int
+    # height: int
+    # isValid: boolean
+
+    + AbstractFlyingObject(int locationX, int locationY, int speedX, int speedY)
+    + forward(): void
+    + crash(AbstractFlyingObject flyingObject): boolean
+    + setLocation(double locationX, double locationY): void
+    + getLocationX(): int
+    + getLocationY(): int
+    + getSpeedY(): int
+    + getImage(): BufferedImage
+    + getWidth(): int
+    + getHeight(): int
+    + notValid(): boolean
+    + vanish(): void
+}
+
+
+abstract class AbstractAircraft extends AbstractFlyingObject {
+    # maxHp: int
+    # hp: int
+
+    + AbstractAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
+    + decreaseHp(int decrease): void
+    + getHp(): int
+    + setHp(int hp): void
+    + getMaxHp(): int
+    + {abstract} shoot(): List<BaseBullet>
+}
+
+
+class HeroAircraft extends AbstractAircraft {
+    - static final INSTANCE: HeroAircraft
+    - shootNum: int
+    - power: int
+    - direction: int
+
+    - HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
+    + static getInstance(): HeroAircraft
+    + forward(): void
+    + shoot(): List<BaseBullet>
+    + reset(): void
+}
+
+
+class MobEnemy extends AbstractAircraft {
+    + MobEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + forward(): void
+    + shoot(): List<BaseBullet>
+}
+
+class EliteEnemy extends AbstractAircraft {
+    + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + forward(): void
+    + shoot(): List<BaseBullet>
+}
+
+class EliteMaxEnemy extends AbstractAircraft {
+    + EliteMaxEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + forward(): void
+    + shoot(): List<BaseBullet>
+}
+
+class AceEnemy extends AbstractAircraft {
+    + AceEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + forward(): void
+    + shoot(): List<BaseBullet>
+}
+
+class BossEnemy extends AbstractAircraft {
+    + BossEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + forward(): void
+    + shoot(): List<BaseBullet>
+}
+
+
+abstract class BaseSupply extends AbstractFlyingObject {
+    + BaseSupply(int locationX, int locationY, int speedX, int speedY)
+    + forward(): void
+    + {abstract} active(HeroAircraft heroAircraft)
+}
+
+class BloodSupply extends BaseSupply {
+    # BLOOD_ADD: int
+    + BloodSupply(int locationX, int locationY, int speedX, int speedY)
+    + active(HeroAircraft heroAircraft): void
+}
+
+class FireSupply extends BaseSupply {
+    + FireSupply(int locationX, int locationY, int speedX, int speedY)
+    + active(HeroAircraft heroAircraft): void
+}
+
+class FirePlusSupply extends BaseSupply {
+    + FirePlusSupply(int locationX, int locationY, int speedX, int speedY)
+    + active(HeroAircraft heroAircraft): void
+}
+
+class BombSupply extends BaseSupply {
+    # damage: int
+    + BombSupply(int locationX, int locationY, int speedX, int speedY, int damage)
+    + active(HeroAircraft heroAircraft): void
+}
+
+class FreezeSupply extends BaseSupply {
+    # freezeTime: int
+    + FreezeSupply(int locationX, int locationY, int speedX, int speedY, int freezeTime)
+    + active(HeroAircraft heroAircraft): void
+}
+
+
+abstract class BaseBullet extends AbstractFlyingObject {
+    - power: int
+    + BaseBullet(int locationX, int locationY, int speedX, int speedY, int power)
+    + forward(): void
+    + getPower(): int
+}
+
+class HeroBullet extends BaseBullet {
+    + HeroBullet(int locationX, int locationY, int speedX, int speedY, int power)
+}
+
+class EnemyBullet extends BaseBullet {
+    + EnemyBullet(int locationX, int locationY, int speedX, int speedY, int power)
+}
+
+
+
+@enduml

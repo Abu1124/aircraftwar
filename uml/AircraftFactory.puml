@@ -1,0 +1,54 @@
+@startuml
+
+
+abstract class AbstractAircraft {
+    -int locationX
+    -int locationY
+    -int speedY
+    -int hp
+    +forward()
+    +shoot(): List<BaseBullet>
+    +decreaseHp(int val)
+}
+
+class MobEnemy extends AbstractAircraft {
+    +forward()
+    +shoot()
+}
+class EliteEnemy extends AbstractAircraft {
+    +forward()
+    +shoot()
+}
+class AceEnemy extends AbstractAircraft {
+    +forward()
+    +shoot()
+}
+class KingEnemy extends AbstractAircraft {
+    +forward()
+    +shoot()
+}
+
+interface AircraftFactory {
+    +createAircraft(x:int, y:int): AbstractAircraft
+}
+
+class MobFactory implements AircraftFactory {
+    +createAircraft(x:int, y:int): AbstractAircraft
+}
+class EliteFactory implements AircraftFactory {
+    +createAircraft(x:int, y:int): AbstractAircraft
+}
+class AceFactory implements AircraftFactory {
+    +createAircraft(x:int, y:int): AbstractAircraft
+}
+class KingFactory implements AircraftFactory {
+    +createAircraft(x:int, y:int): AbstractAircraft
+}
+
+
+
+MobFactory ..> MobEnemy
+EliteFactory ..> EliteEnemy
+AceFactory ..> AceEnemy
+KingFactory ..> KingEnemy
+@enduml

@@ -1,0 +1,36 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+abstract class BaseSupply {
+    -int locationX
+    -int locationY
+    -int speedY
+    +forward()
+    +abstract active(HeroAircraft hero)
+}
+
+class BloodSupply extends BaseSupply {
+    +active(HeroAircraft hero)
+}
+class FireSupply extends BaseSupply {
+    +active(HeroAircraft hero)
+}
+class FirePlusSupply extends BaseSupply {
+    +active(HeroAircraft hero)
+}
+class BombSupply extends BaseSupply {
+    +active(HeroAircraft hero)
+}
+class IceSupply extends BaseSupply {
+    +active(HeroAircraft hero)
+}
+
+class SupplyFactory {
+    +static createSupply(type:String, x:int, y:int): BaseSupply
+    +static createRandomSupply(x:int, y:int): BaseSupply
+}
+
+
+
+SupplyFactory ..> BaseSupply
+@enduml

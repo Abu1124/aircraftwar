@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//workspace/workspace/workspace/src/edu/hitsz/supply/**)",
+      "Read(//workspace/workspace/workspace/src/edu/hitsz/aircraft/**)",
+      "Read(//workspace/workspace/workspace/test/edu/hitsz/aircraft/**)",
+      "Read(//workspace/workspace/workspace/**)",
+      "Read(//workspace/workspace/**)"
+    ]
+  }
+}

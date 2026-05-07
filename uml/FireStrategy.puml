@@ -1,0 +1,34 @@
+@startuml
+
+interface ShootStrategy {
+    + shoot(AbstractAircraft) : List<BaseBullet>
+}
+
+' 上下文 Context
+abstract class AbstractAircraft {
+    - shootStrategy: ShootStrategy
+    + setShootStrategy(ShootStrategy) : void
+    + shoot() : List<BaseBullet>
+}
+
+' 具体策略
+class NoShoot
+class DirectShoot
+class SingleShoot
+class DoubleShoot
+class FanShoot
+class ScatterShoot
+class CircleShoot
+class BossCircleShoot
+
+' 关系
+AbstractAircraft o-- ShootStrategy
+ShootStrategy <|.. NoShoot
+ShootStrategy <|.. DirectShoot
+ShootStrategy <|.. SingleShoot
+ShootStrategy <|.. DoubleShoot
+ShootStrategy <|.. FanShoot
+ShootStrategy <|.. ScatterShoot
+ShootStrategy <|.. CircleShoot
+ShootStrategy <|.. BossCircleShoot
+@enduml

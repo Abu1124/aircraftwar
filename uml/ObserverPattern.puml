@@ -1,0 +1,154 @@
+@startuml ObserverPattern
+skinparam classAttributeIconSize 0
+
+title 观察者模式（Observer Pattern）- 道具效果通知
+
+' ===== 观察者接口 =====
+interface SupplyObserver {
+    + onBombExplode(): void
+    + onIceFreeze(durationMs: long): void
+    + onIceUnfreeze(): void
+}
+
+' ===== 抽象观察目标 =====
+abstract class BaseSupply {
+    - observers: List<SupplyObserver>
+    --
+    + addObserver(observer: SupplyObserver): void
+    + removeObserver(observer: SupplyObserver): void
+    # getObservers(): List<SupplyObserver>
+    # notifyBombExplode(): void
+    # notifyIceFreeze(durationMs: long): void
+    # notifyIceUnfreeze(): void
+    + active(heroAircraft: HeroAircraft): void {abstract}
+}
+
+' ===== 具体观察目标（道具） =====
+class BloodSupply {
+    + active(heroAircraft: HeroAircraft): void
+}
+class FireSupply {
+    + active(heroAircraft: HeroAircraft): void
+}
+class FirePlusSupply {
+    + active(heroAircraft: HeroAircraft): void
+}
+class IceSupply {
+    + active(heroAircraft: HeroAircraft): void
+}
+class BombSupply {
+    + active(heroAircraft: HeroAircraft): void
+}
+
+' ===== 具体观察者（敌机 & 敌机子弹） =====
+class MobEnemy {
+    - frozen: boolean
+    --
+    + onBombExplode(): void       -- vanish()，坠毁
+    + onIceFreeze(durationMs): void  -- frozen=true，永久静止
+    + onIceUnfreeze(): void      -- 空实现（永久冰冻不恢复）
+}
+class EliteEnemy {
+    - frozen: boolean
+    - freezeEndTime: long
+    --
+    + onBombExplode(): void       -- vanish()，坠毁
+    + onIceFreeze(durationMs): void  -- frozen=true，freezeEndTime=now+4000ms
+    + onIceUnfreeze(): void      -- frozen=false，恢复移动
+}
+class AceEnemy {
+    - frozen: boolean
+    - freezeEndTime: long
+    --
+    + onBombExplode(): void       -- vanish()，坠毁
+    + onIceFreeze(durationMs): void  -- frozen=true，freezeEndTime=now+3000ms
+    + onIceUnfreeze(): void      -- frozen=false，恢复移动
+}
+class KingEnemy {
+    - frozen: boolean
+    - freezeEndTime: long
+    - originalSpeedY: int
+    - driftSpeedX: int
+    - driftCounter: int
+    --
+    + onBombExplode(): void       -- decreaseHp(30)，掉血30点，不坠毁
+    + onIceFreeze(durationMs): void  -- frozen=true，freezeEndTime=now+5000ms，speedY=original/3
+    + onIceUnfreeze(): void      -- frozen=false，speedY=originalSpeedY
+}
+class BossEnemy {
+    + onBombExplode(): void       -- 空实现，不受影响
+    + onIceFreeze(durationMs): void  -- 空实现，不受影响
+    + onIceUnfreeze(): void      -- 空实现
+}
+class BaseBullet {
+    - frozen: boolean
+    - freezeEndTime: long
+    --
+    + onBombExplode(): void       -- vanish()，子弹消失
+    + onIceFreeze(durationMs): void  -- frozen=true，freezeEndTime=now+5000ms
+    + onIceUnfreeze(): void      -- frozen=false，freezeEndTime=0
+}
+
+' ===== 关系 =====
+' 道具继承关系
+BaseSupply <|-- BloodSupply
+BaseSupply <|-- FireSupply
+BaseSupply <|-- FirePlusSupply
+BaseSupply <|-- IceSupply
+BaseSupply <|-- BombSupply
+
+' 观察目标与观察者关联
+BaseSupply o-- SupplyObserver : observers >
+SupplyObserver <|.. MobEnemy
+SupplyObserver <|.. EliteEnemy
+SupplyObserver <|.. AceEnemy
+SupplyObserver <|.. KingEnemy
+SupplyObserver <|.. BossEnemy
+SupplyObserver <|.. BaseBullet
+
+' ===== 观察者模式运作流程标注 =====
+
+note as N_BOMB
+**道具激活流程 - 炸弹**
+1. HeroAircraft 碰撞 BombSupply
+2. BombSupply.active() 被调用
+3. notifyBombExplode() 遍历所有观察者
+4. 各观察者执行 onBombExplode()：
+   - Mob/Elite/Ace → vanish()（坠毁）
+   - King → decreaseHp(30)（掉血30）
+   - Boss → 无响应
+   - 敌机子弹 → vanish()
+end note
+BombSupply .. N_BOMB
+
+note as N_ICE
+**道具激活流程 - 冰冻**
+1. HeroAircraft 碰撞 IceSupply
+2. IceSupply.active() 被调用
+3. 对每个观察者传入不同持续时间
+4. 各观察者执行 onIceFreeze(duration)：
+   - Mob → 永久静止（忽略duration）
+   - Elite → 冰冻4秒
+   - Ace → 冰冻3秒
+   - King → 减速5秒（speedY降为1/3）
+   - Boss → 无响应
+   - 敌机子弹 → 静止5秒
+end note
+IceSupply .. N_ICE
+
+note as N_REG
+**观察者注册**
+- Game 在创建敌机/敌机子弹时
+  调用 baseSupply.addObserver(observer)
+- 敌机被销毁时调用 removeObserver
+end note
+BaseSupply .. N_REG
+
+note as N_HERO
+**HeroAircraft**
+持有 BaseSupply 引用，
+碰撞时调用 active(this) 触发效果
+end note
+HeroAircraft .. N_HERO
+
+@enduml

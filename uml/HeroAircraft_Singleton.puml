@@ -1,0 +1,29 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class HeroAircraft {
+  - static final INSTANCE: HeroAircraft
+  - shootNum: int
+  - power: int
+  - direction: int
+
+  - HeroAircraft(int, int, int, int, int)
+  + static getInstance(): HeroAircraft
+  + forward(): void
+  + shoot(): List<BaseBullet>
+  + reset(): void
+}
+
+abstract class AbstractAircraft {
+  # maxHp: int
+  # hp: int
+  + AbstractAircraft(int, int, int, int, int)
+  + decreaseHp(int): void
+  + getHp(): int
+  + setHp(int): void
+  + getMaxHp(): int
+  + abstract shoot(): List<BaseBullet>
+}
+
+AbstractAircraft <|-- HeroAircraft
+@enduml

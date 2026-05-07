@@ -1,0 +1,33 @@
+@startuml
+' https://plantuml.com/class-diagram
+
+class ScoreRecord <<VO>> {
+  - playerName: String
+  - score: int
+  - time: String
+}
+
+interface ScoreRecordDao <<DAO>> {
+  + getAll(): List<ScoreRecord>
+  + add(ScoreRecord): void
+  + deleteByRank(int): boolean
+}
+
+class FileScoreRecordDaoImpl <<DAO Impl>> {
+  + getAll(): List<ScoreRecord>
+  + add(ScoreRecord): void
+  + deleteByRank(int): boolean
+}
+
+class ScoreRecordService <<Service>> {
+  + addRecord(ScoreRecord): void
+  + getRankList(): List<ScoreRecord>
+  + deleteByRank(int): boolean
+}
+
+ScoreRecordDao <|.. FileScoreRecordDaoImpl
+ScoreRecordService --> ScoreRecordDao
+ScoreRecordDao ..> ScoreRecord
+
+@enduml
+

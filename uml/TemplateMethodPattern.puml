@@ -1,0 +1,106 @@
+@startuml TemplateMethodPattern
+skinparam classAttributeIconSize 0
+
+title 模板方法模式（Template Method Pattern）- 游戏主循环
+
+' ===== 抽象父类 =====
+abstract class Game {
+    # enemyAircrafts: List<AbstractAircraft>
+    # enemyMaxNumber: int
+    # enemySpawnCycle: double
+    # shootCycle: double
+    # eliteShootCycle: double
+    # hasBoss: boolean
+    # bossTriggerScore: int
+    # gameTime: int
+    # score: int
+    # difficulty: Difficulty
+    --
+    + action(): void {template}   -- 模板方法（骨架固定）
+    # checkFireSupplyTimeout(): void
+    # shootAction(): void
+    # bulletsMoveAction(): void
+    # aircraftsMoveAction(): void
+    # suppliesMoveAction(): void
+    # crashCheckAction(): void
+    # supplyPickCheckAction(): void
+    # postProcessAction(): void
+    # checkResultAction(): void
+    .. 可重写的钩子方法 ..
+    # spawnEnemy(): void         -- 钩子方法
+    # spawnBoss(): void           -- 钩子方法
+    # increaseDifficulty(): void  -- 钩子方法
+    + createGame(difficulty: Difficulty): Game {static}  -- 工厂方法
+}
+
+' ===== 具体子类 =====
+class EasyGame {
+    -- 初始参数 --
+    enemyMaxNumber = 3
+    enemySpawnCycle = 30
+    shootCycle = 30
+    eliteShootCycle = 40
+    bossTriggerScore = MAX_VALUE
+    --
+    # spawnEnemy(): void          -- 重写：不生成Boss
+    # spawnBoss(): void           -- 重写：简单难度无Boss
+    # increaseDifficulty(): void  -- 重写：无难度递进
+}
+
+class NormalGame {
+    -- 初始参数 --
+    enemyMaxNumber = 5
+    enemySpawnCycle = 20
+    shootCycle = 20
+    eliteShootCycle = 25
+    bossTriggerScore = 300
+    -- 递进参数 --
+    - DIFFICULTY_INCREASE_INTERVAL = 600帧
+    - SPAWN_CYCLE_DECREASE = 2.0
+    --
+    # spawnBoss(): void           -- 重写：每次召唤Boss不改变血量
+    # increaseDifficulty(): void  -- 重写：敌机生成周期、射击周期递进
+}
+
+class HardGame {
+    -- 初始参数 --
+    enemyMaxNumber = 7
+    enemySpawnCycle = 15
+    shootCycle = 18
+    eliteShootCycle = 20
+    bossTriggerScore = 200
+    -- 递进参数 --
+    - DIFFICULTY_INCREASE_INTERVAL = 600帧
+    - SPAWN_CYCLE_DECREASE = 2.5
+    - ELITE_SHOOT_CYCLE_DECREASE = 2.0
+    - HERO_SHOOT_CYCLE_DECREASE = 1.0
+    --
+    # spawnBoss(): void           -- 重写：每次召唤Boss血量+50%
+    # increaseDifficulty(): void  -- 重写：敌机周期、射击周期、英雄机射击周期递进
+}
+
+' ===== 关系 =====
+Game <|-- EasyGame
+Game <|-- NormalGame
+Game <|-- HardGame
+
+' ===== 注释 =====
+note as N1
+模板方法 action() 骨架：
+  1. checkFireSupplyTimeout()
+  2. spawnEnemy()       -- 可重写
+  3. spawnBoss()        -- 可重写
+  4. shootAction()
+  5. bulletsMoveAction()
+  6. aircraftsMoveAction()
+  7. suppliesMoveAction()
+  8. crashCheckAction()
+  9. supplyPickCheckAction()
+  10. increaseDifficulty() -- 可重写
+  11. postProcessAction()
+  12. checkResultAction()
+  13. gameTime++
+end note
+Game .. N1
+
+@enduml
